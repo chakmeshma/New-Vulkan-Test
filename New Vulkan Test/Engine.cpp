@@ -10,10 +10,12 @@ Engine::Engine(HINSTANCE hInstance, HWND hWnd) : hInstance(hInstance), hWnd(hWnd
 	GetQueue();
 	GetDeviceSurfaceCapabilities();
 	GetSurfaceFormats();
+	CreateSwapchain();
 }
 
 Engine::~Engine()
 {
+	DestroySwapchain();
 	DestroyDevice();
 	DestroySurface();
 	DestroyInstance();
@@ -121,6 +123,8 @@ void Engine::CreateDevice()
 		queuePriorities
 		});
 
+	deviceExtensions.push_back("VK_KHR_swapchain");
+
 	deviceCreateInfo = {
 		VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 		nullptr,
@@ -150,8 +154,64 @@ void Engine::GetSurfaceFormats()
 	VK_ASSERT(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatSupportCount, surfaceFormats.data()));
 }
 
+void Engine::CreateSwapchain()
+{
+	swapchainImageCount = 2;
+	if (swapchainImageCount < surfaceCapabilities.minImageCount)
+		throw std::exception{};
+
+	swapchainFormatSpace.format = VK_FORMAT_R8G8B8A8_SRGB;
+	swapchainFormatSpace.colorSpace = VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
+
+	bool swapchainFormatFound = false;
+	for (const auto& surfaceFormat : surfaceFormats)
+	{
+		if (surfaceFormat.format == swapchainFormatSpace.format &&
+			surfaceFormat.colorSpace == swapchainFormatSpace.colorSpace)
+		{
+			swapchainFormatFound = true;
+			break;
+		}
+	}
+
+	if (!swapchainFormatFound)
+		throw std::exception{};
+
+	swapchainCreateInfo = {
+		VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
+		nullptr,
+		0,
+		surface,
+		swapchainImageCount,
+		swapchainFormatSpace.format,
+		swapchainFormatSpace.colorSpace,
+		{surfaceCapabilities.currentExtent.width, surfaceCapabilities.currentExtent.height},
+		1,
+		VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+		VK_SHARING_MODE_EXCLUSIVE,
+		0,
+		nullptr,
+		surfaceCapabilities.currentTransform,
+		VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
+		VK_PRESENT_MODE_FIFO_KHR,
+		VK_TRUE,
+		VK_NULL_HANDLE
+	};
+
+	VK_ASSERT(vkCreateSwapchainKHR(device, &swapchainCreateInfo, nullptr, &swapchain));
+}
+
 void Engine::Render()
 {
+}
+
+void Engine::DestroySwapchain()
+{
+	if (swapchain != VK_NULL_HANDLE)
+	{
+		vkDestroySwapchainKHR(device, swapchain, nullptr);
+		swapchain = VK_NULL_HANDLE;
+	}
 }
 
 void Engine::DestroyDevice()

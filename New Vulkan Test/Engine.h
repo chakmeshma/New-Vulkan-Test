@@ -24,7 +24,9 @@ private:
 	void CreateDevice();
 	void GetQueue();
 	void GetSurfaceFormats();
+	void CreateSwapchain();
 
+	void DestroySwapchain();
 	void DestroyDevice();
 	void DestroySurface();
 	void DestroyInstance();
@@ -33,12 +35,14 @@ private:
 	HWND hWnd = NULL;
 
 	uint32_t selectedQueueFamilyIndex = -1;
+	uint32_t swapchainImageCount = -1;
 
 	VkInstance instance = VK_NULL_HANDLE;
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 	VkDevice device = VK_NULL_HANDLE;
 	VkSurfaceKHR surface = VK_NULL_HANDLE;
 	VkQueue queue = VK_NULL_HANDLE;
+	VkSwapchainKHR swapchain = VK_NULL_HANDLE;
 
 	VkApplicationInfo appInfo{};
 	VkInstanceCreateInfo instanceCreateInfo{};
@@ -52,6 +56,8 @@ private:
 	std::vector<VkDeviceQueueCreateInfo> deviceQueueCreateInfos{};
 	VkSurfaceCapabilitiesKHR surfaceCapabilities{};
 	std::vector<VkSurfaceFormatKHR> surfaceFormats{};
+	VkSurfaceFormatKHR swapchainFormatSpace{};
+	VkSwapchainCreateInfoKHR swapchainCreateInfo{};
 
 	std::vector<const char*> instanceLayers{};
 	std::vector<const char*> instanceExtensions{};
