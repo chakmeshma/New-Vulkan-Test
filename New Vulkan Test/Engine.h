@@ -23,6 +23,7 @@ private:
 	void GetDeviceSurfaceCapabilities();
 	void CreateDevice();
 	void GetQueue();
+	void GetSurfaceFormats();
 
 	void DestroyDevice();
 	void DestroySurface();
@@ -50,6 +51,7 @@ private:
 	VkDeviceCreateInfo deviceCreateInfo{};
 	std::vector<VkDeviceQueueCreateInfo> deviceQueueCreateInfos{};
 	VkSurfaceCapabilitiesKHR surfaceCapabilities{};
+	std::vector<VkSurfaceFormatKHR> surfaceFormats{};
 
 	std::vector<const char*> instanceLayers{};
 	std::vector<const char*> instanceExtensions{};

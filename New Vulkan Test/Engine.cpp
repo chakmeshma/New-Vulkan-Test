@@ -9,6 +9,7 @@ Engine::Engine(HINSTANCE hInstance, HWND hWnd) : hInstance(hInstance), hWnd(hWnd
 	CreateDevice();
 	GetQueue();
 	GetDeviceSurfaceCapabilities();
+	GetSurfaceFormats();
 }
 
 Engine::~Engine()
@@ -139,6 +140,14 @@ void Engine::CreateDevice()
 void Engine::GetQueue()
 {
 	vkGetDeviceQueue(device, selectedQueueFamilyIndex, 0, &queue);
+}
+
+void Engine::GetSurfaceFormats()
+{
+	uint32_t surfaceFormatSupportCount = 0;
+	VK_ASSERT(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatSupportCount, nullptr));
+	surfaceFormats.resize(surfaceFormatSupportCount);
+	VK_ASSERT(vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatSupportCount, surfaceFormats.data()));
 }
 
 void Engine::Render()
