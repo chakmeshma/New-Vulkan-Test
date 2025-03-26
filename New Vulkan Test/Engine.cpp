@@ -11,6 +11,7 @@ Engine::Engine(HINSTANCE hInstance, HWND hWnd) : hInstance(hInstance), hWnd(hWnd
 	GetDeviceSurfaceCapabilities();
 	GetSurfaceFormats();
 	CreateSwapchain();
+	GetSwapchainImages();
 }
 
 Engine::~Engine()
@@ -199,6 +200,13 @@ void Engine::CreateSwapchain()
 	};
 
 	VK_ASSERT(vkCreateSwapchainKHR(device, &swapchainCreateInfo, nullptr, &swapchain));
+}
+
+void Engine::GetSwapchainImages()
+{
+	swapchainImages.resize(swapchainImageCount);
+
+	VK_ASSERT(vkGetSwapchainImagesKHR(device, swapchain, &swapchainImageCount, swapchainImages.data()));
 }
 
 void Engine::Render()

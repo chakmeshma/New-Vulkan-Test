@@ -25,6 +25,7 @@ private:
 	void GetQueue();
 	void GetSurfaceFormats();
 	void CreateSwapchain();
+	void GetSwapchainImages();
 
 	void DestroySwapchain();
 	void DestroyDevice();
@@ -43,6 +44,7 @@ private:
 	VkSurfaceKHR surface = VK_NULL_HANDLE;
 	VkQueue queue = VK_NULL_HANDLE;
 	VkSwapchainKHR swapchain = VK_NULL_HANDLE;
+	std::vector<VkImage> swapchainImages{};
 
 	VkApplicationInfo appInfo{};
 	VkInstanceCreateInfo instanceCreateInfo{};
